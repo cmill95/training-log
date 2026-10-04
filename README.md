@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Training Log
 
-## Getting Started
+[![CI](https://github.com/cmill95/training-log/actions/workflows/ci.yml/badge.svg)](https://github.com/cmill95/training-log/actions/workflows/ci.yml)
 
-First, run the development server:
+A full-stack TypeScript app for coaches and athletes. Coaches create workouts and assign them,
+athletes log what they completed, and a dashboard shows each athlete's progress over time.
+
+**Live:** https://training-log-ashy.vercel.app
+
+> 🚧 **In progress.** The foundation is done: deployment, CI/CD, and the database schema.
+> Auth and the coach/athlete features are next.
+
+## Stack
+
+| Layer     | Choice                                          |
+| --------- | ----------------------------------------------- |
+| Framework | Next.js 16 (App Router) · React 19 · TypeScript |
+| Styling   | Tailwind CSS 4                                  |
+| Database  | Postgres on Neon · Drizzle ORM · node-postgres  |
+| Auth      | Auth.js _(planned)_                             |
+| Quality   | ESLint · Prettier · Husky + lint-staged         |
+| CI/CD     | GitHub Actions · Vercel (preview + production)  |
+
+## Getting started
+
+Requires Node.js 22 and a Postgres database.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create `.env.local` with your connection strings:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+DATABASE_URL="postgresql://..."           # pooled, used by the app
+DATABASE_URL_UNPOOLED="postgresql://..."  # direct, used for migrations
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+If you have access to the Vercel project, `npx vercel link && npx vercel env pull .env.local` does this for you.
 
-## Learn More
+Then apply the schema and start the dev server:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run db:migrate
+npm run dev            # http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command                | What it does                                     |
+| ---------------------- | ------------------------------------------------ |
+| `npm run dev`          | Dev server with Fast Refresh                     |
+| `npm run build`        | Production build (also type-checks)              |
+| `npm run lint`         | ESLint                                           |
+| `npm run format`       | Format everything with Prettier                  |
+| `npm run format:check` | Check formatting without changing files          |
+| `npm run typecheck`    | Generate route types, then `tsc --noEmit`        |
+| `npm run db:generate`  | Generate a SQL migration from `src/db/schema.ts` |
+| `npm run db:migrate`   | Apply pending migrations                         |
 
-## Deploy on Vercel
+## Database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Four tables, with the rules enforced by Postgres itself (unique emails, a `role` enum,
+non-negative sets/reps/duration, foreign keys):
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+users ──< workouts ──< assignments >── users
+                            │
+                            └──< logs   (at most one per assignment)
+```
+
+- **No stored status:** an assignment is complete when it has a log, and overdue when its `due_date` has passed without one.
+- **History is protected:** a workout that has been assigned can't be deleted.
+- Migrations are generated SQL files in `drizzle/`, reviewed in PRs. Applied migrations are never edited.
+
+## Development workflow
+
+`main` is protected: every change goes through a pull request.
+
+1. **On commit:** a pre-commit hook formats and lints the staged files, then type-checks the project.
+2. **On every PR:** GitHub Actions runs Lint, Format, Typecheck and Build in parallel. All four must pass to merge.
+3. **Preview:** Vercel deploys each PR to its own URL, backed by its own Neon database branch.
+4. **Merge:** PRs are squash-merged, and Vercel deploys `main` to production.
+
+## Known limitations
+
+- No teams yet: any coach can assign workouts to any athlete.
+- Workouts are free text rather than structured exercises.
