@@ -64,3 +64,32 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    # Same database as docker-compose.yml, started fresh for this job and
+    # thrown away after it.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: training_log_test
+        ports:
+          - 5433:5432 # the port vitest.integration.config.mts connects to
+        # Steps start only once the healthcheck passes.
+        options: >-
+          --health-cmd "pg_isready -U postgres -d training_log_test"
+          --health-interval 1s
+          --health-timeout 3s
+          --health-retries 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:integration
