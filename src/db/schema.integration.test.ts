@@ -17,7 +17,7 @@ function pgError(code: string, constraint?: string) {
 // Every test starts from empty tables.
 beforeEach(async () => {
   await db.execute(
-    sql`truncate users, workouts, assignments, logs restart identity cascade`,
+    sql`truncate users, sessions, accounts, verifications, workouts, assignments, logs restart identity cascade`,
   );
 });
 
@@ -27,11 +27,11 @@ afterAll(() => db.$client.end());
 async function seedAssignment() {
   const [coach] = await db
     .insert(users)
-    .values({ email: "coach@example.com", role: "coach" })
+    .values({ name: "Coach", email: "coach@example.com", role: "coach" })
     .returning();
   const [athlete] = await db
     .insert(users)
-    .values({ email: "athlete@example.com" })
+    .values({ name: "Athlete", email: "athlete@example.com" })
     .returning();
   const [workout] = await db
     .insert(workouts)
@@ -46,10 +46,10 @@ async function seedAssignment() {
 
 describe("users", () => {
   test("rejects a duplicate email", async () => {
-    await db.insert(users).values({ email: "a@example.com" });
+    await db.insert(users).values({ name: "A", email: "a@example.com" });
 
     await expect(
-      db.insert(users).values({ email: "a@example.com" }),
+      db.insert(users).values({ name: "A", email: "a@example.com" }),
     ).rejects.toMatchObject(pgError(UNIQUE_VIOLATION, "users_email_unique"));
   });
 
@@ -58,7 +58,7 @@ describe("users", () => {
     const role = "parent" as "coach";
 
     await expect(
-      db.insert(users).values({ email: "a@example.com", role }),
+      db.insert(users).values({ name: "A", email: "a@example.com", role }),
     ).rejects.toMatchObject(pgError(INVALID_TEXT_REPRESENTATION));
   });
 });

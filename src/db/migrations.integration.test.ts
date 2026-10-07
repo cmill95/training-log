@@ -10,9 +10,12 @@ test("migrations create every table", async () => {
     where table_schema = 'public' order by table_name
   `);
   expect(result.rows.map((r) => r.table_name)).toEqual([
+    "accounts",
     "assignments",
     "logs",
+    "sessions",
     "users",
+    "verifications",
     "workouts",
   ]);
 });
