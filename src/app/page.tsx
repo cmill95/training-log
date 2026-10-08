@@ -19,6 +19,11 @@ export default async function Home() {
               Your workouts →
             </Link>
           )}
+          {session.user.role === "athlete" && (
+            <Link href="/athlete" className="underline">
+              My workouts →
+            </Link>
+          )}
           <form action={signOut}>
             <button className="rounded-md border border-zinc-300 px-4 py-2 font-medium dark:border-zinc-700">
               Sign out
