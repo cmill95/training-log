@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { assignments, users, workouts } from "@/db/schema";
+import { assignments, logs, users, workouts } from "@/db/schema";
 import { requireRole } from "@/lib/require-role";
 import { AssignForm } from "./assign-form";
 
@@ -29,9 +29,11 @@ export default async function WorkoutPage(
         id: assignments.id,
         athleteName: users.name,
         dueDate: assignments.dueDate,
+        loggedAt: logs.completedAt,
       })
       .from(assignments)
       .innerJoin(users, eq(users.id, assignments.athleteId))
+      .leftJoin(logs, eq(logs.assignmentId, assignments.id))
       .where(eq(assignments.workoutId, id))
       .orderBy(desc(assignments.assignedAt)),
     // MVP: every athlete is listed (no teams yet).
@@ -67,7 +69,10 @@ export default async function WorkoutPage(
                 key={assignment.id}
                 className="flex justify-between gap-4 px-4 py-3"
               >
-                <span>{assignment.athleteName}</span>
+                <span>
+                  {assignment.athleteName}
+                  {assignment.loggedAt && " ✓"}
+                </span>
                 <span className="text-zinc-500">
                   {assignment.dueDate
                     ? `Due ${assignment.dueDate}`
