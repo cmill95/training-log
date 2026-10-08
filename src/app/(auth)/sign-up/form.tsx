@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { signUp } from "../actions";
-import { Field } from "../field";
+import { Field } from "@/components/field";
 
 export function SignUpForm() {
   const [state, formAction, pending] = useActionState(signUp, {});

@@ -33,6 +33,7 @@ a dashboard shows athlete progress. Learning project: explain non-obvious choice
 - `src/app/`: routes (`page.tsx`), layouts, colocated server actions (`actions.ts`)
 - `src/db/`: Drizzle schema and client (planned)
 - `src/lib/`: shared, framework-free logic (unit-tested) (planned)
+- `src/components/`: UI shared across routes
 
 ## Conventions
 

@@ -1,9 +1,12 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  // Resolve the "@/..." imports from tsconfig.json, as Next.js does.
+  resolve: { tsconfigPaths: true },
   test: {
     include: ["src/**/*.integration.test.ts"],
     globalSetup: ["./src/test/migrate-test-db.ts"],
+    setupFiles: ["./src/test/setup-next-mocks.ts"],
     // Set before any test file imports src/db, so `db` connects here, not to Neon.
     env: {
       DATABASE_URL:
