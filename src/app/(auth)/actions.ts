@@ -6,17 +6,10 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { roleEnum } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { fields, type FormState } from "@/lib/forms";
 
 // Sign-up and sign-in are the exception to "check the session first":
 // the user has no session yet. Zod still checks the input.
-
-export type FormState = {
-  error?: string;
-  fieldErrors?: Partial<Record<string, string[]>>;
-  // React clears a form after its action runs; these refill the fields.
-  // Never includes the password.
-  values?: Record<string, string>;
-};
 
 const signUpSchema = z.object({
   name: z.string().trim().min(1, "Enter your name"),
@@ -30,12 +23,6 @@ const signInSchema = z.object({
   email: z.email("Enter a valid email"),
   password: z.string().min(1, "Enter your password"),
 });
-
-function fields(formData: FormData, names: string[]) {
-  return Object.fromEntries(
-    names.map((name) => [name, String(formData.get(name) ?? "")]),
-  );
-}
 
 export async function signUp(
   _prev: FormState,
