@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/db";
 import { assignments, logs, users, workouts } from "@/db/schema";
+import { isOverdue } from "@/lib/due-date";
 import { requireRole } from "@/lib/require-role";
 
 export const metadata: Metadata = { title: "My workouts · Training Log" };
@@ -37,9 +38,7 @@ export default async function AthletePage() {
   const done = rows
     .filter((row) => row.loggedAt)
     .sort((a, b) => b.loggedAt!.getTime() - a.loggedAt!.getTime());
-  // Compared as "YYYY-MM-DD" strings in UTC (the server's clock); an athlete
-  // far from UTC may see "overdue" a few hours early or late.
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
 
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-8 px-4 py-12">
@@ -57,7 +56,7 @@ export default async function AthletePage() {
           <Section title="To do" empty="All caught up.">
             {toDo.map((row) => (
               <Item key={row.id} row={row}>
-                {row.dueDate && row.dueDate < today ? (
+                {isOverdue(row.dueDate, now) ? (
                   <span className="text-red-600 dark:text-red-400">
                     Overdue · {row.dueDate}
                   </span>
