@@ -113,7 +113,9 @@ function Item({ row, children }: { row: Row; children: React.ReactNode }) {
           {row.title}
           <span className="block text-sm text-zinc-500">{row.coachName}</span>
         </span>
-        <span className="text-right text-sm text-zinc-500">{children}</span>
+        <span className="text-right text-sm whitespace-nowrap text-zinc-500">
+          {children}
+        </span>
       </Link>
     </li>
   );
