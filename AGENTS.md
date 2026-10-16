@@ -45,7 +45,10 @@ a dashboard shows athlete progress. Learning project: explain non-obvious choice
 
 ## Testing & CI
 
-- Pre-commit hook runs lint-staged + typecheck; never bypass it with `--no-verify`
+- Vitest: unit tests in `*.test.ts` (no DB, run by `npm test` and the pre-commit
+  hook); DB tests in `*.integration.test.ts` (`npm run test:integration`, needs
+  `npm run db:test:up`)
+- Pre-commit hook runs lint-staged (incl. related unit tests) + typecheck; never bypass it with `--no-verify`
 - CI must be green before merging to `main`
 
 ## Boundaries
