@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { assignments, logs, users, workouts } from "@/db/schema";
+import { formatDuration } from "@/lib/duration";
 import { requireRole } from "@/lib/require-role";
 import { LogForm } from "./log-form";
 
@@ -90,10 +91,4 @@ export default async function AssignmentPage(
       </section>
     </main>
   );
-}
-
-// 750 → "12:30"
-function formatDuration(seconds: number) {
-  const minutes = Math.floor(seconds / 60);
-  return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
 }

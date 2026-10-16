@@ -21,7 +21,12 @@ export default async function CoachPage() {
       <Link href="/" className="text-sm underline">
         ← Home
       </Link>
-      <h1 className="text-2xl font-semibold">Your workouts</h1>
+      <div className="flex items-baseline justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Your workouts</h1>
+        <Link href="/coach/athletes" className="underline">
+          Athlete progress →
+        </Link>
+      </div>
 
       {myWorkouts.length === 0 ? (
         <p className="text-zinc-500">
