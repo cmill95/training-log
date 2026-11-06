@@ -51,13 +51,13 @@ export default async function AthletesPage() {
                         ? "Nothing assigned"
                         : `${done} done · ${toDo} to do`}
                       {overdue > 0 && (
-                        <span className="text-red-600 dark:text-red-400">
+                        <span className="whitespace-nowrap text-red-600 dark:text-red-400">
                           {` · ${overdue} overdue`}
                         </span>
                       )}
                     </span>
                   </span>
-                  <span className="text-right text-sm text-zinc-500">
+                  <span className="text-right text-sm whitespace-nowrap text-zinc-500">
                     {lastLogged
                       ? `Last ${lastLogged.toISOString().slice(0, 10)}`
                       : "No logs yet"}

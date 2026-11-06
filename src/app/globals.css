@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Tells the browser to draw native controls (date picker icon, select
+     arrows, scrollbars) in the matching theme. */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -16,6 +19,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    color-scheme: dark;
   }
 }
 
@@ -23,4 +27,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  /* A long URL or word in user text wraps instead of widening the page. */
+  overflow-wrap: anywhere;
 }

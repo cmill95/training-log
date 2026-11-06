@@ -73,7 +73,7 @@ export default async function WorkoutPage(
                   {assignment.athleteName}
                   {assignment.loggedAt && " ✓"}
                 </span>
-                <span className="text-zinc-500">
+                <span className="whitespace-nowrap text-zinc-500">
                   {assignment.dueDate
                     ? `Due ${assignment.dueDate}`
                     : "No due date"}

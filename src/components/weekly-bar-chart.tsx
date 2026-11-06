@@ -1,7 +1,9 @@
 import type { WeekCount } from "@/lib/progress";
 
 // Plain SVG drawn on the server: no chart library and no client JavaScript.
-// The viewBox is in made-up units; the SVG scales to its container's width.
+// The viewBox is in made-up units; the SVG scales to its container's width,
+// text included. Font sizes are picked to stay readable on a 360px phone;
+// max-w-md stops them growing huge on a laptop.
 const SLOT = 40; // horizontal space per week
 const BAR = 24;
 const TOP = 16; // room for the count above the tallest bar
@@ -21,7 +23,7 @@ export function WeeklyBarChart({ weeks }: { weeks: WeekCount[] }) {
       viewBox={`0 0 ${width} ${HEIGHT}`}
       role="img"
       aria-label={label}
-      className="w-full text-zinc-500"
+      className="w-full max-w-md text-zinc-500"
     >
       <line
         x1={0}
@@ -48,7 +50,7 @@ export function WeeklyBarChart({ weeks }: { weeks: WeekCount[] }) {
                 x={center}
                 y={BASELINE - height - 4}
                 textAnchor="middle"
-                fontSize={10}
+                fontSize={12}
                 className="fill-current"
               >
                 {week.count}
@@ -58,7 +60,7 @@ export function WeeklyBarChart({ weeks }: { weeks: WeekCount[] }) {
               x={center}
               y={HEIGHT - 6}
               textAnchor="middle"
-              fontSize={9}
+              fontSize={11}
               className="fill-current"
             >
               {formatWeek(week.weekStart)}
